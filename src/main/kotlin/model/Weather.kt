@@ -16,7 +16,8 @@ class Weather: JsonModel {
         super.updateModel(json)
 
         with(json) {
-//            desc =
+            description = getString("description")
+            icon = getString("icon")
         }
     }
 
