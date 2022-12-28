@@ -2,21 +2,29 @@ package com.marcfearby.view
 
 import com.marcfearby.controller.ForecastController
 import javafx.geometry.Orientation.*
+import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import tornadofx.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainView: View("Klimatic") {
 
     private val forecastController: ForecastController by inject()
     private var apiKey: TextField by singleAssign()
+    var cityName: Label by singleAssign()
+    var todayTemp: Label by singleAssign()
 
     override val root = borderpane {
         addClass(Styles.mainView)
         center = vbox {
             currentWeatherView()
+            vbox {
+                cityName = label()
+                todayTemp = label()
+            }
         }
     }
 
@@ -37,8 +45,18 @@ class MainView: View("Klimatic") {
                     }
                     setOnKeyPressed {
                         if (it.code == KeyCode.ENTER) {
-                            runAsync {
-                                fetchPayload(forecastController.selectedCity.name.value, apiKey.text)
+                            // will run only if the field is deemed valid (i.e., not empty!)
+                            forecastController.selectedCity.commit {
+                                val city = forecastController.selectedCity.name.value
+                                runAsync {
+                                    fetchPayload(city, apiKey.text)
+                                } ui {
+                                    val payload = forecastController.forecasts
+                                    val today = payload.first()
+                                    val date = SimpleDateFormat("EEE, d MMM yyyy").format(Date(today.ts * 1000L))
+                                    cityName.text = "Forecast for $city on $date"
+                                    todayTemp.text = "min: ${today.minTemp}°C, max: ${today.maxTemp}°C, ${today.weather.description}"
+                                }
                             }
                         }
                     }
