@@ -3,11 +3,11 @@ package com.marcfearby.view
 import javafx.stage.Stage
 import tornadofx.*
 
-class MyApp: App(MainView::class) {
+class MyApp: App(MainView::class, Styles::class) {
     override fun start(stage: Stage) {
         with(stage) {
-            width = 250.0
-            height = 300.0
+            width = 600.0
+            height = 400.0
         }
         super.start(stage)
     }

@@ -7,10 +7,10 @@ import javax.json.JsonObject
 
 class Payload: JsonModel {
 
-    val cityProperty = SimpleStringProperty()
-    var city by cityProperty
+    private val cityProperty = SimpleStringProperty()
+    var city: String by cityProperty
 
-    val forecastsProperty = SimpleListProperty<Forecast>()
+    private val forecastsProperty = SimpleListProperty<Forecast>()
     var forecasts: List<Forecast> by property(forecastsProperty)
 
     override fun updateModel(json: JsonObject) {
