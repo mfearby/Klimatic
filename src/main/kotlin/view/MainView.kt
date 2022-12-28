@@ -20,7 +20,7 @@ class MainView: View("Klimatic") {
                 val payload = forecastController.getPayload(apiKey.text, cityName.text)
                 payload.forecasts.forEach {
                     val time = Date(it.ts * 1000L)
-                    println("Forecast for ${time}: ${it.weatherProperty.value.description}")
+                    println("Forecast for ${time}: min ${it.minTemp}, max ${it.maxTemp}, ${it.weatherProperty.value.description}")
                 }
             }
         }

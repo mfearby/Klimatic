@@ -1,8 +1,8 @@
 package com.marcfearby.model
 
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleStringProperty
 import tornadofx.*
 import javax.json.JsonObject
 
@@ -12,11 +12,11 @@ class Forecast: JsonModel {
     val tsProperty = SimpleIntegerProperty()
     var ts by tsProperty
 
-    val minTempProperty = SimpleStringProperty()
-    var minTemp: String by minTempProperty
+    val minTempProperty = SimpleDoubleProperty()
+    var minTemp: Double by minTempProperty
 
-    val maxTempProperty = SimpleStringProperty()
-    var maxTemp: String by maxTempProperty
+    val maxTempProperty = SimpleDoubleProperty()
+    var maxTemp: Double by maxTempProperty
 
     val rhProperty = SimpleIntegerProperty()
     var humidity by rhProperty
@@ -31,8 +31,8 @@ class Forecast: JsonModel {
             ts = getInt("ts")
             weather = getJsonObject("weather").toModel()
             humidity = getInt("rh")
-//            minTemp = getString("min_temp")
-//            maxTemp = getString("max_temp")
+            minTemp = getDouble("min_temp")
+            maxTemp = getDouble("max_temp")
         }
     }
 
