@@ -3,7 +3,7 @@ package com.marcfearby.view
 import com.marcfearby.controller.ForecastController
 import javafx.scene.control.TextField
 import tornadofx.*
-import java.sql.Timestamp
+import java.util.*
 
 class MainView: View("Klimatic") {
 
@@ -19,8 +19,8 @@ class MainView: View("Klimatic") {
             action {
                 val payload = forecastController.getPayload(apiKey.text, cityName.text)
                 payload.forecasts.forEach {
-                    val time = Timestamp(it.ts * 1000L)
-                    println("Forecast for ${time.toLocalDateTime()}: ${it.weatherProperty.value.description}")
+                    val time = Date(it.ts * 1000L)
+                    println("Forecast for ${time}: ${it.weatherProperty.value.description}")
                 }
             }
         }
