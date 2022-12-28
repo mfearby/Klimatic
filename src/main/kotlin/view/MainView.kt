@@ -22,8 +22,12 @@ class MainView: View("Klimatic") {
         center = vbox {
             currentWeatherView()
             vbox {
-                cityName = label()
-                todayTemp = label()
+                cityName = label {
+                    addClass(Styles.forecastLabel)
+                }
+                todayTemp = label {
+                    addClass(Styles.forecastLabel)
+                }
             }
         }
     }
