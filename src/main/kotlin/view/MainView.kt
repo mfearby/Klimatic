@@ -16,18 +16,21 @@ class MainView: View("Klimatic") {
     private var apiKey: TextField by singleAssign()
     var cityName: Label by singleAssign()
     var todayTemp: Label by singleAssign()
+    var todayIcon: Label by singleAssign()
 
     override val root = borderpane {
         addClass(Styles.mainView)
         center = vbox {
             currentWeatherView()
             vbox {
+                addClass(Styles.contentWrapper)
                 cityName = label {
                     addClass(Styles.forecastLabel)
                 }
                 todayTemp = label {
                     addClass(Styles.forecastLabel)
                 }
+                todayIcon = label()
             }
         }
     }
@@ -60,6 +63,12 @@ class MainView: View("Klimatic") {
                                     val date = SimpleDateFormat("EEE, d MMM yyyy").format(Date(today.ts * 1000L))
                                     cityName.text = "Forecast for $city on $date"
                                     todayTemp.text = "min: ${today.minTemp}°C, max: ${today.maxTemp}°C, ${today.weather.description}"
+
+                                    val icon = getIcon(today.weather.code)
+                                    todayIcon.graphic = imageview("/icons/$icon.png", lazyload = true) {
+                                        fitHeight = 200.0
+                                        fitWidth = 200.0
+                                    }
                                 }
                             }
                         }
@@ -80,5 +89,16 @@ class MainView: View("Klimatic") {
             println("Forecast for ${time}: min ${it.minTemp}, max ${it.maxTemp}, ${it.weatherProperty.value.description}")
         }
         forecastController.forecasts = payload.forecasts.toObservable()
+    }
+
+    private fun getIcon(code: Int): String = when(code) {
+        in 200 .. 299 -> "tstorms"
+        in 300 .. 399, 623 -> "flurries" // includes "drizzle" which has no icon
+        in 500 .. 599 -> "rain"
+        in 600 .. 622 -> "snow"
+        in 741 .. 751 -> "fog"
+        in 801 .. 802 -> "mostlysunny"
+        in 803 .. 899 -> "clouds"
+        else -> "clear"
     }
 }
