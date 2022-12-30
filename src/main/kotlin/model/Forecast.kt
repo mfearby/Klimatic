@@ -4,6 +4,8 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import tornadofx.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.json.JsonObject
 
 class Forecast: JsonModel {
@@ -12,13 +14,15 @@ class Forecast: JsonModel {
     val tsProperty = SimpleIntegerProperty()
     var ts by tsProperty
 
-    val minTempProperty = SimpleDoubleProperty()
+    val date: String get() = SimpleDateFormat("EEE, d MMM yyyy").format(Date(this.ts * 1000L))
+
+    private val minTempProperty = SimpleDoubleProperty()
     var minTemp: Double by minTempProperty
 
-    val maxTempProperty = SimpleDoubleProperty()
+    private val maxTempProperty = SimpleDoubleProperty()
     var maxTemp: Double by maxTempProperty
 
-    val rhProperty = SimpleIntegerProperty()
+    private val rhProperty = SimpleIntegerProperty()
     var humidity by rhProperty
 
     val weatherProperty = SimpleObjectProperty<Weather>()
