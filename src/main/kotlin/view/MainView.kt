@@ -1,11 +1,15 @@
 package com.marcfearby.view
 
 import com.marcfearby.controller.ForecastController
+import com.marcfearby.model.Forecast
 import javafx.geometry.Orientation.*
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color.GRAY
+import javafx.scene.paint.Color.TRANSPARENT
 import tornadofx.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -14,9 +18,12 @@ class MainView: View("Klimatic") {
 
     private val forecastController: ForecastController by inject()
     private var apiKey: TextField by singleAssign()
-    var cityName: Label by singleAssign()
-    var todayTemp: Label by singleAssign()
-    var todayIcon: Label by singleAssign()
+    private var cityName: Label by singleAssign()
+    private var todayTemp: Label by singleAssign()
+    private var todayIcon: Label by singleAssign()
+    private var forecastView: DataGrid<Forecast> by singleAssign()
+    private var sevenDayLabel: Label by singleAssign()
+    private var divider: HBox by singleAssign()
 
     override val root = borderpane {
         addClass(Styles.mainView)
@@ -31,6 +38,9 @@ class MainView: View("Klimatic") {
                     addClass(Styles.forecastLabel)
                 }
                 todayIcon = label()
+                divider = hbox()
+                sevenDayLabel = label()
+//                forecastView = datagrid() // << Here be Dragons!
             }
         }
     }
@@ -58,17 +68,7 @@ class MainView: View("Klimatic") {
                                 runAsync {
                                     fetchPayload(city, apiKey.text)
                                 } ui {
-                                    val payload = forecastController.forecasts
-                                    val today = payload.first()
-                                    val date = SimpleDateFormat("EEE, d MMM yyyy").format(Date(today.ts * 1000L))
-                                    cityName.text = "Forecast for $city on $date"
-                                    todayTemp.text = "min: ${today.minTemp}°C, max: ${today.maxTemp}°C, ${today.weather.description}"
-
-                                    val icon = getIcon(today.weather.code)
-                                    todayIcon.graphic = imageview("/icons/$icon.png", lazyload = true) {
-                                        fitHeight = 200.0
-                                        fitWidth = 200.0
-                                    }
+                                    updateUI(city)
                                 }
                             }
                         }
@@ -76,6 +76,26 @@ class MainView: View("Klimatic") {
                 }
             }
         }
+    }
+
+    private fun updateUI(city: String) {
+        val payload = forecastController.forecasts
+        val today = payload.first()
+        val date = SimpleDateFormat("EEE, d MMM yyyy").format(Date(today.ts * 1000L))
+        cityName.text = "Forecast for $city on $date"
+        todayTemp.text = "min: ${today.minTemp}°C, max: ${today.maxTemp}°C, ${today.weather.description}"
+
+        val icon = getIcon(today.weather.code)
+        todayIcon.graphic = imageview("/icons/$icon.png", lazyload = true) {
+            fitHeight = 200.0
+            fitWidth = 200.0
+        }
+
+        divider.style {
+            borderColor += box(TRANSPARENT, TRANSPARENT, GRAY, TRANSPARENT)
+        }
+
+        sevenDayLabel.text = "7 Day Weather Forecast"
     }
 
     private fun fetchPayload(city: String, key: String) {
